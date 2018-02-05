@@ -38,7 +38,7 @@ class mot(imdb):
 
         self._year = year
         self._image_set = image_set
-        self._mot_dir = os.path.join(cfg.DATA_DIR, 'MOT' + self._year[2:4])
+        self._mot_dir = os.path.join(cfg.DATA_DIR, 'MOT' + self._year[2:4] + 'Det')
         self._mot_train_dir = os.path.join(self._mot_dir, 'train')
         self._mot_test_dir = os.path.join(self._mot_dir, 'test')
         self._roidb_handler = self.gt_roidb
@@ -48,10 +48,10 @@ class mot(imdb):
         #self._num_classes = len(self._classes)
 
 
-        self._train_folders = ['MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN', 'MOT17-09-FRCNN', 'MOT17-10-FRCNN',
-            'MOT17-11-FRCNN', 'MOT17-13-FRCNN']
-        self._test_folders = ['MOT17-01-FRCNN', 'MOT17-03-FRCNN', 'MOT17-06-FRCNN', 'MOT17-07-FRCNN',
-            'MOT17-08-FRCNN', 'MOT17-12-FRCNN', 'MOT17-14-FRCNN']
+        self._train_folders = ['MOT17-02', 'MOT17-04', 'MOT17-05', 'MOT17-09', 'MOT17-10',
+            'MOT17-11', 'MOT17-13']
+        self._test_folders = ['MOT17-01', 'MOT17-03', 'MOT17-06', 'MOT17-07',
+            'MOT17-08', 'MOT17-12', 'MOT17-14']
 
         assert os.path.exists(self._mot_dir), \
             'Path does not exist: {}'.format(self._mot_dir)
