@@ -22,3 +22,6 @@ _ext
 
 # Python cache
 __pycache__
+
+# MacOSX proably from sshfs
+._*
