@@ -13,6 +13,7 @@ from __future__ import print_function
 __sets = {}
 from datasets.pascal_voc import pascal_voc
 from datasets.coco import coco
+from datasets.mot import mot
 
 import numpy as np
 
@@ -39,6 +40,11 @@ for year in ['2015']:
     name = 'coco_{}_{}'.format(year, split)
     __sets[name] = (lambda split=split, year=year: coco(split, year))
 
+# MOT17 dataset
+for year in ['2017']:
+  for split in ['train', 'small_val', 'small_train', 'test', 'all']:
+    name = 'mot_{}_{}'.format(year, split)
+    __sets[name] = (lambda split=split, year=year: mot(split, year))
 
 def get_imdb(name):
   """Get an imdb (image database) by name."""
