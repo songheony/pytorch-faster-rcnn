@@ -1,5 +1,6 @@
 *.so
 *.pyc
+*.cu.o
 output
 tensorboard
 lib/build
