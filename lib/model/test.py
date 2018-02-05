@@ -101,7 +101,8 @@ def im_detect(net, im):
     # Apply bounding-box regression deltas
     box_deltas = bbox_pred
     pred_boxes = bbox_transform_inv(torch.from_numpy(boxes), torch.from_numpy(box_deltas)).numpy()
-    pred_boxes = _clip_boxes(pred_boxes, im.shape)
+    if cfg.TEST.BBOX_CLIP:
+      pred_boxes = _clip_boxes(pred_boxes, im.shape)
   else:
     # Simply repeat the boxes, once for each class
     pred_boxes = np.tile(boxes, (1, scores.shape[1]))

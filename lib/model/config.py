@@ -182,6 +182,9 @@ __C.TEST.SVM = False
 # Test using bounding-box regressors
 __C.TEST.BBOX_REG = True
 
+# Clip bounding-boxes to image boundary after BBOX_REG, only used if TEST.BBOX_REG = True
+__C.TEST.BBOX_CLIP = True
+
 # Propose boxes
 __C.TEST.HAS_RPN = False
 
