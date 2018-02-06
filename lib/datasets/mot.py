@@ -277,6 +277,7 @@ class mot(imdb):
                 'flipped': False,
                 'seg_areas': seg_areas}
 
+    """
     def evaluate_detections(self, all_boxes, output_dir=None, ret=False):
 
         if self._image_set in ["test", "all"]:
@@ -296,6 +297,10 @@ class mot(imdb):
             
         if ret:
             return ap, rec, prec
+    """
+    def evaluate_detections(self, all_boxes, output_dir):
+
+        self._write_results_file(all_boxes, output_dir)
 
     def _matlab_eval(self, all_boxes):
         pass
@@ -452,7 +457,7 @@ class mot(imdb):
                 img1, name = osp.split(path)
                 # get image number out of name
                 frame = int(name.split('.')[0])
-                # smth like /train/MOT17-09-FRCNN
+                # smth like /train/MOT17-09-FRCNN or /train/MOT17-09
                 tmp = osp.dirname(img1)
                 # get the folder name of the sequence and split it
                 tmp = osp.basename(tmp).split('-')
