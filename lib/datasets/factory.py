@@ -14,6 +14,7 @@ __sets = {}
 from datasets.pascal_voc import pascal_voc
 from datasets.coco import coco
 from datasets.mot import mot
+from datasets.kitti_detection import kitti_detection
 
 import numpy as np
 
@@ -45,6 +46,12 @@ for year in ['2017']:
   for split in ['train', 'small_val', 'small_train', 'test', 'all']:
     name = 'mot_{}_{}'.format(year, split)
     __sets[name] = (lambda split=split, year=year: mot(split, year))
+
+# KITTI object
+for cl in ['Car', 'Pedestrian', 'Cyclist']:
+  for split in ['train', 'small_val', 'small_train', 'test']:
+    name = 'kitti_detection_{}_{}'.format(cl, split)
+    __sets[name] = (lambda split=split, cl=cl: kitti_detection(split, cl))
 
 def get_imdb(name):
   """Get an imdb (image database) by name."""
