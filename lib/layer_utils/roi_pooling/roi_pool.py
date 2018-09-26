@@ -47,7 +47,10 @@ class RoIPoolFunction(Function):
 
         # print grad_input
 
-        return grad_input, None
+        #return grad_input, None
+        # https://discuss.pytorch.org/t/runtimeerror-contiguous-is-not-implemented-for-type-undefinedtype/11124/27
+        # changed to solve "RuntimeError: contiguous is not implemented for type UndefinedType" bug
+        return grad_input, torch.zeros_like(self.rois)
 
 
 class RoIPool(torch.nn.Module):
