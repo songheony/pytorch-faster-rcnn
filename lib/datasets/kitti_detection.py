@@ -180,7 +180,7 @@ class kitti_detection(imdb):
         with open(gt_file, "r") as inf:
             reader = csv.reader(inf, delimiter=' ')
             for row in reader:
-                if row[0] == self._cl and float(row[1]) < 0.5 and int(row[2]) <= 1:
+                if row[0] == self._cl and float(row[1]) <= 0.5 and int(row[2]) <= 2:
                     bb = {}
                     bb['bb_left'] = int(float(row[4]))
                     bb['bb_top'] = int(float(row[5]))
@@ -293,7 +293,7 @@ class kitti_detection(imdb):
         for k,v in files.items():
             #outfile = osp.join(output_dir, out)
             with open(k, "w") as of:
-                writer = csv.writer(of, delimiter=',')
+                writer = csv.writer(of, delimiter=' ')
                 for d in v:
                     writer.writerow(d)
 
