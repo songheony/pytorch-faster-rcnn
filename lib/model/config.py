@@ -254,6 +254,9 @@ __C.MOBILENET.DEPTH_MULTIPLIER = 1.
 # they were trained with
 __C.PIXEL_MEANS = np.array([[[102.9801, 115.9465, 122.7717]]])
 
+# Whether to apply a contrast equalization based on OpenCVs CLAHE
+__C.APPLY_CLAHE = False
+
 # For reproducibility
 __C.RNG_SEED = 3
 

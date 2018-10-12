@@ -155,6 +155,15 @@ def test_net(net, imdb, weights_filename, max_per_image=100, thresh=0.):
   for i in range(num_images):
     im = cv2.imread(imdb.image_path_at(i))
 
+    ############################################################
+    # New feature: contrast equalization
+    if cfg.APPLY_CLAHE:
+      im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
+      clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+      im[:,:,0] = clahe.apply(im[:,:,0])
+      im = cv2.cvtColor(im, cv2.COLOR_YUV2BGR)
+    ############################################################
+
     _t['im_detect'].tic()
     scores, boxes = im_detect(net, im)
     _t['im_detect'].toc()

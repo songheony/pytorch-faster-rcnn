@@ -60,6 +60,16 @@ def _get_image_blob(roidb, scale_inds):
   im_scales = []
   for i in range(num_images):
     im = cv2.imread(roidb[i]['image'])
+
+    ############################################################
+    # New feature: contrast equalization
+    if cfg.APPLY_CLAHE:
+      im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
+      clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+      im[:,:,0] = clahe.apply(im[:,:,0])
+      im = cv2.cvtColor(im, cv2.COLOR_YUV2BGR)
+    ############################################################
+
     if roidb[i]['flipped']:
       im = im[:, ::-1, :]
     target_size = cfg.TRAIN.SCALES[scale_inds[i]]
