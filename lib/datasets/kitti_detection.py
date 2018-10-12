@@ -57,7 +57,7 @@ class kitti_detection(imdb):
         # list all training images
         train_image_dir = os.path.join(self._kitti_train_dir, 'image_2')
         #train_images = [f for f in os.listdir(train_image_dir) if "png" in f]
-        train_images = ["%06d.png"%n for n in range(7480)]
+        train_images = ["%06d.png"%n for n in range(7481)]
 
         for i, im_name in enumerate(train_images, 1):
             im_path = os.path.join(train_image_dir, im_name)
@@ -180,7 +180,7 @@ class kitti_detection(imdb):
         with open(gt_file, "r") as inf:
             reader = csv.reader(inf, delimiter=' ')
             for row in reader:
-                if row[0] == self._cl and float(row[1]) <= 0.5 and int(row[2]) <= 2:
+                if row[0] == self._cl and float(row[1]) <= 0.5 and int(row[2]) <= 1:
                     bb = {}
                     bb['bb_left'] = int(float(row[4]))
                     bb['bb_top'] = int(float(row[5]))
@@ -267,6 +267,14 @@ class kitti_detection(imdb):
         #format_str = "{}, -1, {}, {}, {}, {}, {}, -1, -1, -1"
 
         files = {}
+
+        # assure everything is put out in order to evaluate small splits
+        if "test" not in self._image_set:
+            for i in range(7481):
+                out = '%06d.txt'%(i)
+                outfile = osp.join(output_dir, out)
+                files[outfile] = []
+
         for cls in all_boxes:
             for i, dets in enumerate(cls):
                 path = self.image_path_at(i)
