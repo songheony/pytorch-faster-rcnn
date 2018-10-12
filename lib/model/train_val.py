@@ -38,7 +38,7 @@ class SolverWrapper(object):
     A wrapper class for the training process
   """
 
-  def __init__(self, network, imdb, roidb, valroidb, output_dir, tbdir, pretrained_model=None):
+  def __init__(self, network, imdb, roidb, valroidb, output_dir, tbdir, pretrained_model=None, pretrained_full_model=False):
     self.net = network
     self.imdb = imdb
     self.roidb = roidb
@@ -50,6 +50,8 @@ class SolverWrapper(object):
     if not os.path.exists(self.tbvaldir):
       os.makedirs(self.tbvaldir)
     self.pretrained_model = pretrained_model
+
+    self.pretrained_full_model = pretrained_full_model
 
   def snapshot(self, iter):
     net = self.net
@@ -165,6 +167,9 @@ class SolverWrapper(object):
     # Fresh train directly from ImageNet weights
     print('Loading initial model weights from {:s}'.format(self.pretrained_model))
     self.net.load_pretrained_cnn(torch.load(self.pretrained_model))
+    if self.pretrained_full_model:
+      print('Overwriting with full model weights from {:s}'.format(self.pretrained_model))
+      self.net.load_state_dict(torch.load(self.pretrained_full_model))
     print('Loaded.')
     # Need to fix the variables before loading, so that the RGB weights are changed to BGR
     # For VGG16 it also changes the convolutional weights fc6 and fc7 to
@@ -335,14 +340,15 @@ def filter_roidb(roidb):
 
 
 def train_net(network, imdb, roidb, valroidb, output_dir, tb_dir,
-              pretrained_model=None,
+              pretrained_model=None, pretrained_full_model=None,
               max_iters=40000):
   """Train a Faster R-CNN network."""
   roidb = filter_roidb(roidb)
   valroidb = filter_roidb(valroidb)
 
   sw = SolverWrapper(network, imdb, roidb, valroidb, output_dir, tb_dir,
-                     pretrained_model=pretrained_model)
+                     pretrained_model=pretrained_model,
+                     pretrained_full_model=pretrained_full_model)
 
   print('Solving...')
   sw.train_model(max_iters)
