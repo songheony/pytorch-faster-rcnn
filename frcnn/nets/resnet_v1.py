@@ -3,24 +3,22 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Zheqi He and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-from nets.network import Network
-from model.config import cfg
-
-import utils.timer
+import math
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
-import math
 import torch.utils.model_zoo as model_zoo
-
 import torchvision
+from torch.autograd import Variable
 from torchvision.models.resnet import BasicBlock, Bottleneck
+
+from ..model.config import cfg
+from ..utils import timer
+from .network import Network
+
 
 class ResNet(torchvision.models.resnet.ResNet):
   def __init__(self, block, layers, num_classes=1000):
@@ -128,7 +126,7 @@ class resnetv1(Network):
       # other numbers are not supported
       raise NotImplementedError
 
-    # Fix blocks 
+    # Fix blocks
     for p in self.resnet.bn1.parameters(): p.requires_grad=False
     for p in self.resnet.conv1.parameters(): p.requires_grad=False
     assert (0 <= cfg.RESNET.FIXED_BLOCKS < 4)
@@ -147,7 +145,7 @@ class resnetv1(Network):
     self.resnet.apply(set_bn_fix)
 
     # Build resnet.
-    self._layers['head'] = nn.Sequential(self.resnet.conv1, self.resnet.bn1,self.resnet.relu, 
+    self._layers['head'] = nn.Sequential(self.resnet.conv1, self.resnet.bn1,self.resnet.relu,
       self.resnet.maxpool,self.resnet.layer1,self.resnet.layer2,self.resnet.layer3)
 
   def train(self, mode=True):

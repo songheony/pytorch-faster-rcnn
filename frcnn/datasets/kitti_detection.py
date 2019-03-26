@@ -5,19 +5,19 @@
 # Written by Ross Girshick
 # --------------------------------------------------------
 
+import configparser
+import csv
 import os
 import os.path as osp
-# import PIL
-import numpy as np
 import pickle
-import csv
-import configparser
+
+import numpy as np
 import scipy
 from PIL import Image
 
-from datasets.imdb import imdb
+from ..model.config import cfg
+from .imdb import imdb
 
-from model.config import cfg
 
 class kitti_detection(imdb):
     """ Data class for the KITTI Tracking dataset
@@ -186,7 +186,7 @@ class kitti_detection(imdb):
                     bb['bb_top'] = int(float(row[5]))
                     bb['bb_right'] = int(float(row[6]))
                     bb['bb_bottom'] = int(float(row[7]))
- 
+
                     bounding_boxes.append(bb)
 
         num_objs = len(bounding_boxes)
@@ -218,7 +218,7 @@ class kitti_detection(imdb):
             seg_areas[i] = float((x2 - x1 + 1) * (y2 - y1 + 1))
             #ishards[i] = 0
             overlaps[i][1] = 1.0
-                
+
 
         overlaps = scipy.sparse.csr_matrix(overlaps)
 
@@ -248,20 +248,20 @@ class kitti_detection(imdb):
         <frame>, <id>, <bb_left>, <bb_top>, <bb_width>, <bb_height>, <conf>, <x>, <y>, <z>
 
         Files to sumbit:
-        ./MOT17-01.txt 
-        ./MOT17-02.txt 
-        ./MOT17-03.txt 
-        ./MOT17-04.txt 
-        ./MOT17-05.txt 
-        ./MOT17-06.txt 
-        ./MOT17-07.txt 
-        ./MOT17-08.txt 
-        ./MOT17-09.txt 
-        ./MOT17-10.txt 
-        ./MOT17-11.txt 
-        ./MOT17-12.txt 
-        ./MOT17-13.txt 
-        ./MOT17-14.txt 
+        ./MOT17-01.txt
+        ./MOT17-02.txt
+        ./MOT17-03.txt
+        ./MOT17-04.txt
+        ./MOT17-05.txt
+        ./MOT17-06.txt
+        ./MOT17-07.txt
+        ./MOT17-08.txt
+        ./MOT17-09.txt
+        ./MOT17-10.txt
+        ./MOT17-11.txt
+        ./MOT17-12.txt
+        ./MOT17-13.txt
+        ./MOT17-14.txt
         """
 
         #format_str = "{}, -1, {}, {}, {}, {}, {}, -1, -1, -1"

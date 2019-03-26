@@ -7,8 +7,8 @@ def add_path(path):
 
 this_dir = osp.dirname(__file__)
 
-# Add this dir
-add_path(this_dir)
+# # Add this dir
+# add_path(this_dir)
 
 coco_path = osp.join(this_dir, '..', 'data', 'coco', 'PythonAPI')
 add_path(coco_path)

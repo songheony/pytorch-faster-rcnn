@@ -6,15 +6,16 @@
 # --------------------------------------------------------
 
 """Compute minibatch blobs for training a Fast R-CNN network."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 import numpy.random as npr
+
 import cv2
-from model.config import cfg
-from utils.blob import prep_im_for_blob, im_list_to_blob
+
+from ..model.config import cfg
+from ..utils.blob import im_list_to_blob, prep_im_for_blob
+
 
 def get_minibatch(roidb, num_classes):
   """Given a roidb, construct a minibatch sampled from it."""
@@ -33,13 +34,13 @@ def get_minibatch(roidb, num_classes):
 
   assert len(im_scales) == 1, "Single batch only"
   assert len(roidb) == 1, "Single batch only"
-  
+
   # gt boxes: (x1, y1, x2, y2, cls)
   if cfg.TRAIN.USE_ALL_GT:
     # Include all ground truth boxes
     gt_inds = np.where(roidb[0]['gt_classes'] != 0)[0]
   else:
-    # For the COCO ground truth boxes, exclude the ones that are ''iscrowd'' 
+    # For the COCO ground truth boxes, exclude the ones that are ''iscrowd''
     gt_inds = np.where(roidb[0]['gt_classes'] != 0 & np.all(roidb[0]['gt_overlaps'].toarray() > -1.0, axis=1))[0]
   gt_boxes = np.empty((len(gt_inds), 5), dtype=np.float32)
   gt_boxes[:, 0:4] = roidb[0]['boxes'][gt_inds, :] * im_scales[0]

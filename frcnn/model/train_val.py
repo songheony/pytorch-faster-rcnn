@@ -3,29 +3,30 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen and Zheqi He
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
+
+import glob
+import os
+import sys
+import time
+
+import numpy as np
+import torch
+import torch.optim as optim
 
 import tensorboardX as tb
 
-from model.config import cfg
-import roi_data_layer.roidb as rdl_roidb
-from roi_data_layer.layer import RoIDataLayer
-import utils.timer
+from ..roi_data_layer import roidb as rdl_roidb
+from ..roi_data_layer.layer import RoIDataLayer
+from ..utils import timer
+from .config import cfg
+
 try:
   import cPickle as pickle
 except ImportError:
   import pickle
 
-import torch
-import torch.optim as optim
 
-import numpy as np
-import os
-import sys
-import glob
-import time
 
 
 def scale_lr(optimizer, scale):
@@ -145,7 +146,7 @@ class SolverWrapper(object):
     # Get the snapshot name in pytorch
     redfiles = []
     for stepsize in cfg.TRAIN.STEPSIZE:
-      redfiles.append(os.path.join(self.output_dir, 
+      redfiles.append(os.path.join(self.output_dir,
                       cfg.TRAIN.SNAPSHOT_PREFIX + '_iter_{:d}.pth'.format(stepsize+1)))
     sfiles = [ss for ss in sfiles if ss not in redfiles]
 
@@ -228,7 +229,7 @@ class SolverWrapper(object):
     if lsf == 0:
       lr, last_snapshot_iter, stepsizes, np_paths, ss_paths = self.initialize()
     else:
-      lr, last_snapshot_iter, stepsizes, np_paths, ss_paths = self.restore(str(sfiles[-1]), 
+      lr, last_snapshot_iter, stepsizes, np_paths, ss_paths = self.restore(str(sfiles[-1]),
                                                                              str(nfiles[-1]))
     iter = last_snapshot_iter + 1
     last_summary_time = time.time()
@@ -242,14 +243,15 @@ class SolverWrapper(object):
 
     while iter < max_iters + 1:
       # Learning rate
-      if iter == next_stepsize + 1:
+      # if iter == next_stepsize + 1:
+      if iter in [5000, 10000, 15000]:
         # Add snapshot here before reducing the learning rate
         self.snapshot(iter)
         lr *= cfg.TRAIN.GAMMA
         scale_lr(self.optimizer, cfg.TRAIN.GAMMA)
         next_stepsize = stepsizes.pop()
 
-      utils.timer.timer.tic()
+      timer.timer.tic()
       # Get training data, one batch at a time
       blobs = self.data_layer.forward()
 
@@ -268,17 +270,17 @@ class SolverWrapper(object):
         # Compute the graph without summary
         rpn_loss_cls, rpn_loss_box, loss_cls, loss_box, total_loss = \
           self.net.train_step(blobs, self.optimizer)
-      utils.timer.timer.toc()
+      timer.timer.toc()
 
       # Display training information
       if iter % (cfg.TRAIN.DISPLAY) == 0:
         print('iter: %d / %d, total loss: %.6f\n >>> rpn_loss_cls: %.6f\n '
               '>>> rpn_loss_box: %.6f\n >>> loss_cls: %.6f\n >>> loss_box: %.6f\n >>> lr: %f' % \
               (iter, max_iters, total_loss, rpn_loss_cls, rpn_loss_box, loss_cls, loss_box, lr))
-        print('speed: {:.3f}s / iter'.format(utils.timer.timer.average_time()))
+        print('speed: {:.3f}s / iter'.format(timer.timer.average_time()))
 
-        # for k in utils.timer.timer._average_time.keys():
-        #   print(k, utils.timer.timer.average_time(k))
+        # for k in timer.timer._average_time.keys():
+        #   print(k, timer.timer.average_time(k))
 
       # Snapshotting
       if iter % cfg.TRAIN.SNAPSHOT_ITERS == 0:

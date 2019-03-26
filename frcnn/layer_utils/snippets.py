@@ -3,12 +3,12 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from layer_utils.generate_anchors import generate_anchors
+
+from .generate_anchors import generate_anchors
+
 
 def generate_anchors_pre(height, width, feat_stride, anchor_scales=(8,16,32), anchor_ratios=(0.5,1,2)):
   """ A wrapper function to generate anchors given different scales

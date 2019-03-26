@@ -6,19 +6,19 @@
 # --------------------------------------------------------
 
 """Factory method for easily getting imdbs by name."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-__sets = {}
-from datasets.pascal_voc import pascal_voc
-from datasets.coco import coco
-from datasets.mot import mot
-from datasets.kitti_detection import kitti_detection
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-# Set up voc_<year>_<split> 
+from .coco import coco
+from .kitti_detection import kitti_detection
+from .mot import mot
+from .pascal_voc import pascal_voc
+
+__sets = {}
+
+
+# Set up voc_<year>_<split>
 for year in ['2007', '2012']:
   for split in ['train', 'val', 'trainval', 'test']:
     name = 'voc_{}_{}'.format(year, split)
@@ -42,7 +42,7 @@ for year in ['2015']:
     __sets[name] = (lambda split=split, year=year: coco(split, year))
 
 # MOT17 dataset
-for year in ['2017']:
+for year in ['2017', '2019']:
   for split in ['train', 'small_val', 'small_train', 'test', 'all']:
     name = 'mot_{}_{}'.format(year, split)
     __sets[name] = (lambda split=split, year=year: mot(split, year))

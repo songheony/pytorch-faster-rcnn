@@ -3,35 +3,30 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import math
-import numpy as np
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from scipy.misc import imresize
 from torch.autograd import Variable
-
-import utils.timer
-
-from layer_utils.snippets import generate_anchors_pre
-from layer_utils.proposal_layer import proposal_layer
-from layer_utils.proposal_top_layer import proposal_top_layer
-from layer_utils.anchor_target_layer import anchor_target_layer
-from layer_utils.proposal_target_layer import proposal_target_layer
-from utils.visualization import draw_bounding_boxes
-
-from layer_utils.roi_pooling.roi_pool import RoIPoolFunction
-from layer_utils.roi_align.crop_and_resize import CropAndResizeFunction
-
-from model.config import cfg
 
 import tensorboardX as tb
 
-from scipy.misc import imresize
+from ..layer_utils.anchor_target_layer import anchor_target_layer
+from ..layer_utils.proposal_layer import proposal_layer
+from ..layer_utils.proposal_target_layer import proposal_target_layer
+from ..layer_utils.proposal_top_layer import proposal_top_layer
+from ..layer_utils.roi_align.crop_and_resize import CropAndResizeFunction
+from ..layer_utils.roi_pooling.roi_pool import RoIPoolFunction
+from ..layer_utils.snippets import generate_anchors_pre
+from ..model.config import cfg
+from ..utils import timer
+from ..utils.visualization import draw_bounding_boxes
+
 
 class Network(nn.Module):
   def __init__(self):
@@ -61,7 +56,7 @@ class Network(nn.Module):
     image = draw_bounding_boxes(\
                       self._gt_image, self._image_gt_summaries['gt_boxes'], self._image_gt_summaries['im_info'])
 
-    return tb.summary.image('GROUND_TRUTH', image[0].astype('float32')/255.0)
+    return tb.summary.image('GROUND_TRUTH', image[0].astype('float32')/255.0, dataformats='HWC')
 
   def _add_act_summary(self, key, tensor):
     return tb.summary.histogram('ACT/' + key + '/activations', tensor.data.cpu().numpy(), bins='auto'),
@@ -114,7 +109,7 @@ class Network(nn.Module):
     width = bottom.size(3)
 
     pre_pool_size = cfg.POOLING_SIZE * 2 if max_pool else cfg.POOLING_SIZE
-    crops = CropAndResizeFunction(pre_pool_size, pre_pool_size)(bottom, 
+    crops = CropAndResizeFunction(pre_pool_size, pre_pool_size)(bottom,
       torch.cat([y1/(height-1),x1/(width-1),y2/(height-1),x2/(width-1)], 1), rois[:, 0].int())
     if max_pool:
       crops = F.max_pool2d(crops, 2, 2)
@@ -233,7 +228,7 @@ class Network(nn.Module):
     # change it so that the score has 2 as its channel size
     rpn_cls_score_reshape = rpn_cls_score.view(1, 2, -1, rpn_cls_score.size()[-1]) # batch * 2 * (num_anchors*h) * w
     rpn_cls_prob_reshape = F.softmax(rpn_cls_score_reshape, dim=1)
-    
+
     # Move channel to the last dimenstion, to fit the input of python functions
     rpn_cls_prob = rpn_cls_prob_reshape.view_as(rpn_cls_score).permute(0, 2, 3, 1) # batch * h * w * (num_anchors * 2)
     rpn_cls_score = rpn_cls_score.permute(0, 2, 3, 1) # batch * h * w * (num_anchors * 2)
@@ -308,7 +303,7 @@ class Network(nn.Module):
     self.rpn_net = nn.Conv2d(self._net_conv_channels, cfg.RPN_CHANNELS, [3, 3], padding=1)
 
     self.rpn_cls_score_net = nn.Conv2d(cfg.RPN_CHANNELS, self._num_anchors * 2, [1, 1])
-    
+
     self.rpn_bbox_pred_net = nn.Conv2d(cfg.RPN_CHANNELS, self._num_anchors * 4, [1, 1])
 
     self.cls_score_net = nn.Linear(self._fc7_channels, self._num_classes)
@@ -342,7 +337,7 @@ class Network(nn.Module):
           summaries.append(self._add_train_summary(k, var))
 
       self._image_gt_summaries = {}
-    
+
     return summaries
 
   def _predict(self):
@@ -352,7 +347,7 @@ class Network(nn.Module):
 
     # build the anchors for the image
     self._anchor_component(net_conv.size(2), net_conv.size(3))
-   
+
     rois = self._region_proposal(net_conv)
     if cfg.POOLING_MODE == 'crop':
       pool5 = self._crop_pool_layer(net_conv, rois)
@@ -364,7 +359,7 @@ class Network(nn.Module):
     fc7 = self._head_to_tail(pool5)
 
     cls_prob, bbox_pred = self._region_classification(fc7)
-    
+
     for k in self._predictions.keys():
       self._score_summaries[k] = self._predictions[k]
 
@@ -401,7 +396,7 @@ class Network(nn.Module):
       else:
         m.weight.data.normal_(mean, stddev)
       m.bias.data.zero_()
-      
+
     normal_init(self.rpn_net, 0, 0.01, cfg.TRAIN.TRUNCATED)
     normal_init(self.rpn_cls_score_net, 0, 0.01, cfg.TRAIN.TRUNCATED)
     normal_init(self.rpn_bbox_pred_net, 0, 0.01, cfg.TRAIN.TRUNCATED)
@@ -480,9 +475,8 @@ class Network(nn.Module):
 
   def load_state_dict(self, state_dict):
     """
-    Because we remove the definition of fc layer in resnet now, it will fail when loading 
+    Because we remove the definition of fc layer in resnet now, it will fail when loading
     the model trained before.
     To provide back compatibility, we overwrite the load_state_dict
     """
     nn.Module.load_state_dict(self, {k: state_dict[k] for k in list(self.state_dict())})
-

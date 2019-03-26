@@ -6,13 +6,13 @@
 # --------------------------------------------------------
 
 """Transform a roidb into a trainable roidb by adding a bunch of metadata."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from model.config import cfg
 import PIL
+
+from ..model.config import cfg
+
 
 def prepare_roidb(imdb):
   """Enrich the imdb's roidb by adding some derived quantities that

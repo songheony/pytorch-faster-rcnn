@@ -4,17 +4,18 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import os
-from model.config import cfg
+
 import numpy as np
 import numpy.random as npr
-from utils.bbox import bbox_overlaps
-from model.bbox_transform import bbox_transform
 import torch
+
+from ..model.bbox_transform import bbox_transform
+from ..model.config import cfg
+from ..utils.bbox import bbox_overlaps
+
 
 def anchor_target_layer(rpn_cls_score, gt_boxes, im_info, _feat_stride, all_anchors, num_anchors):
   """Same as the anchor target layer in original Fast/er RCNN """

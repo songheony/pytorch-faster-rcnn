@@ -16,12 +16,12 @@ except ImportError:
 import os
 import math
 
-from utils.timer import Timer
-from model.nms_wrapper import nms
-from utils.blob import im_list_to_blob
+from ..utils.timer import Timer
+from ..utils.blob import im_list_to_blob
 
-from model.config import cfg, get_output_dir
-from model.bbox_transform import clip_boxes, bbox_transform_inv
+from .nms_wrapper import nms
+from .config import cfg, get_output_dir
+from .bbox_transform import clip_boxes, bbox_transform_inv
 
 import torch
 
@@ -93,7 +93,7 @@ def im_detect(net, im):
   blobs['im_info'] = np.array([im_blob.shape[1], im_blob.shape[2], im_scales[0]], dtype=np.float32)
 
   _, scores, bbox_pred, rois = net.test_image(blobs['data'], blobs['im_info'])
-  
+
   boxes = rois[:, 1:5] / im_scales[0]
   scores = np.reshape(scores, [scores.shape[0], -1])
   bbox_pred = np.reshape(bbox_pred, [bbox_pred.shape[0], -1])
@@ -201,5 +201,6 @@ def test_net(net, imdb, weights_filename, max_per_image=100, thresh=0.):
     pickle.dump(all_boxes, f, pickle.HIGHEST_PROTOCOL)
 
   print('Evaluating detections')
-  imdb.evaluate_detections(all_boxes, output_dir)
 
+  imdb.evaluate_detections(all_boxes, output_dir)
+  return all_boxes

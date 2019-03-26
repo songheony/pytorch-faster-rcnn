@@ -3,19 +3,19 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-from nets.network import Network
-from model.config import cfg
+import math
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
-import math
 import torchvision.models as models
+from torch.autograd import Variable
+
+from ..model.config import cfg
+from .network import Network
+
 
 class vgg16(Network):
   def __init__(self):
@@ -40,7 +40,7 @@ class vgg16(Network):
   def _image_to_head(self):
     net_conv = self._layers['head'](self._image)
     self._act_summaries['conv'] = net_conv
-    
+
     return net_conv
 
   def _head_to_tail(self, pool5):

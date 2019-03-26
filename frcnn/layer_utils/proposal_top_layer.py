@@ -3,16 +3,15 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from model.config import cfg
-from model.bbox_transform import bbox_transform_inv, clip_boxes
 import numpy.random as npr
-
 import torch
+
+from ..model.bbox_transform import bbox_transform_inv, clip_boxes
+from ..model.config import cfg
+
 
 def proposal_top_layer(rpn_cls_prob, rpn_bbox_pred, im_info, _feat_stride, anchors, num_anchors):
   """A layer that just selects the top region proposals

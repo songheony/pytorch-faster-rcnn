@@ -4,19 +4,17 @@
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick, Sean Bell and Xinlei Chen
 # --------------------------------------------------------
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 import numpy.random as npr
-from model.config import cfg
-from model.bbox_transform import bbox_transform
-from utils.bbox import bbox_overlaps
-
-
 import torch
 from torch.autograd import Variable
+
+from ..model.bbox_transform import bbox_transform
+from ..model.config import cfg
+from ..utils.bbox import bbox_overlaps
+
 
 def proposal_target_layer(rpn_rois, rpn_scores, gt_boxes, _num_classes):
   """

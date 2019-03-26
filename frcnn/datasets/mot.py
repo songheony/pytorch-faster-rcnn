@@ -5,18 +5,18 @@
 # Written by Ross Girshick
 # --------------------------------------------------------
 
+import configparser
+import csv
 import os
 import os.path as osp
-# import PIL
-import numpy as np
 import pickle
-import csv
-import configparser
+
+import numpy as np
 import scipy
 
-from datasets.imdb import imdb
+from ..model.config import cfg
+from .imdb import imdb
 
-from model.config import cfg
 
 class mot(imdb):
     """ Data class for the Multiple Object Tracking Dataset
@@ -38,7 +38,7 @@ class mot(imdb):
 
         self._year = year
         self._image_set = image_set
-        self._mot_dir = os.path.join(cfg.DATA_DIR, 'MOT' + self._year[2:4] + 'Det')
+        self._mot_dir = os.path.join(cfg.DATA_DIR, f"MOT{year[2:4]}Det")
         self._mot_train_dir = os.path.join(self._mot_dir, 'train')
         self._mot_test_dir = os.path.join(self._mot_dir, 'test')
         self._roidb_handler = self.gt_roidb
@@ -48,10 +48,12 @@ class mot(imdb):
         #self._num_classes = len(self._classes)
 
 
-        self._train_folders = ['MOT17-02', 'MOT17-04', 'MOT17-05', 'MOT17-09', 'MOT17-10',
-            'MOT17-11', 'MOT17-13']
-        self._test_folders = ['MOT17-01', 'MOT17-03', 'MOT17-06', 'MOT17-07',
-            'MOT17-08', 'MOT17-12', 'MOT17-14']
+        self._train_folders = os.listdir(os.path.join(self._mot_dir, 'train'))
+        self._test_folders = os.listdir(os.path.join(self._mot_dir, 'test'))
+        # self._train_folders = ['MOT17-02', 'MOT17-04', 'MOT17-05', 'MOT17-09', 'MOT17-10',
+        #     'MOT17-11', 'MOT17-13']
+        # self._test_folders = ['MOT17-01', 'MOT17-03', 'MOT17-06', 'MOT17-07',
+        #     'MOT17-08', 'MOT17-12', 'MOT17-14']
 
         assert os.path.exists(self._mot_dir), \
             'Path does not exist: {}'.format(self._mot_dir)
@@ -238,7 +240,7 @@ class mot(imdb):
                     #    bb['bb_width'] = self._index_to_width[index] - bb['bb_left'] + 1
                     #if bb['bb_top']+bb['bb_height']-1 > self._index_to_height[index]:
                     #    bb['bb_height'] = self._index_to_height[index] - bb['bb_top'] + 1
-                        
+
                     bounding_boxes.append(bb)
 
         num_objs = len(bounding_boxes)
@@ -265,7 +267,7 @@ class mot(imdb):
             seg_areas[i] = float((x2 - x1 + 1) * (y2 - y1 + 1))
             #ishards[i] = 0
             overlaps[i][1] = 1.0
-                
+
 
         overlaps = scipy.sparse.csr_matrix(overlaps)
 
@@ -294,7 +296,7 @@ class mot(imdb):
                     rf.write(results_string)
                 self._write_results_file(all_boxes, output_dir)
             print(results_string)
-            
+
         if ret:
             return ap, rec, prec
     """
@@ -432,20 +434,20 @@ class mot(imdb):
         <frame>, <id>, <bb_left>, <bb_top>, <bb_width>, <bb_height>, <conf>, <x>, <y>, <z>
 
         Files to sumbit:
-        ./MOT17-01.txt 
-        ./MOT17-02.txt 
-        ./MOT17-03.txt 
-        ./MOT17-04.txt 
-        ./MOT17-05.txt 
-        ./MOT17-06.txt 
-        ./MOT17-07.txt 
-        ./MOT17-08.txt 
-        ./MOT17-09.txt 
-        ./MOT17-10.txt 
-        ./MOT17-11.txt 
-        ./MOT17-12.txt 
-        ./MOT17-13.txt 
-        ./MOT17-14.txt 
+        ./MOT17-01.txt
+        ./MOT17-02.txt
+        ./MOT17-03.txt
+        ./MOT17-04.txt
+        ./MOT17-05.txt
+        ./MOT17-06.txt
+        ./MOT17-07.txt
+        ./MOT17-08.txt
+        ./MOT17-09.txt
+        ./MOT17-10.txt
+        ./MOT17-11.txt
+        ./MOT17-12.txt
+        ./MOT17-13.txt
+        ./MOT17-14.txt
         """
 
         #format_str = "{}, -1, {}, {}, {}, {}, {}, -1, -1, -1"
