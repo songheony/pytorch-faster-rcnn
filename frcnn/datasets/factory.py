@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from .coco import coco
+# from .coco import coco
 from .kitti_detection import kitti_detection
 from .mot import mot
 from .pascal_voc import pascal_voc
@@ -30,16 +30,16 @@ for year in ['2007', '2012']:
     __sets[name] = (lambda split=split, year=year: pascal_voc(split, year, use_diff=True))
 
 # Set up coco_2014_<split>
-for year in ['2014']:
-  for split in ['train', 'val', 'minival', 'valminusminival', 'trainval']:
-    name = 'coco_{}_{}'.format(year, split)
-    __sets[name] = (lambda split=split, year=year: coco(split, year))
+# for year in ['2014']:
+#   for split in ['train', 'val', 'minival', 'valminusminival', 'trainval']:
+#     name = 'coco_{}_{}'.format(year, split)
+#     __sets[name] = (lambda split=split, year=year: coco(split, year))
 
-# Set up coco_2015_<split>
-for year in ['2015']:
-  for split in ['test', 'test-dev']:
-    name = 'coco_{}_{}'.format(year, split)
-    __sets[name] = (lambda split=split, year=year: coco(split, year))
+# # Set up coco_2015_<split>
+# for year in ['2015']:
+#   for split in ['test', 'test-dev']:
+#     name = 'coco_{}_{}'.format(year, split)
+#     __sets[name] = (lambda split=split, year=year: coco(split, year))
 
 # MOT17 dataset
 for year in ['2017', '2019']:
