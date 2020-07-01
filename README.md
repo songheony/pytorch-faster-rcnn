@@ -1,4 +1,4 @@
-I've edited the code for compatiblity with PyTorch 0.4.1
+# I've edited the code for compatiblity with PyTorch 0.4.1
 
 
 # Important notice:
