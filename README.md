@@ -1,3 +1,6 @@
+I've edited the code for compatiblity with PyTorch 0.4.1
+
+
 # Important notice:
 If you used the master branch before Sep. 26 2017 and its corresponding pretrained model, **PLEASE PAY ATTENTION**:
 The old master branch in now under old_master, you can still run the code and download the pretrained model, but the pretrained model for that old master is not compatible to the current master!
